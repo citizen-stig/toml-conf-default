@@ -13,13 +13,23 @@ struct ExtraSection {
     pub another_parameter: String
 }
 
+impl Default for ExtraSection {
+    fn default() -> Self {
+        ExtraSection {
+            another_number: 33,
+            another_parameter: "default_extra".to_string()
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Config {
     pub some_number: usize,
     pub some_parameter: String,
+    #[serde(default)]
     pub extra_section: ExtraSection,
-
 }
+
 
 impl Config {
     pub fn from_file(path: &str) -> Result<Config, Box<dyn Error>> {

@@ -1,5 +1,5 @@
 some_number = 42
-some_parameter = "test param"
+#some_parameter = "test param"
 
 #[extra_section]
 #another_number = 3

@@ -10,26 +10,25 @@ use std::process::exit;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ExtraSection {
     pub another_number: usize,
-    pub another_parameter: String
+    pub another_parameter: String,
 }
 
 impl Default for ExtraSection {
     fn default() -> Self {
         ExtraSection {
             another_number: 33,
-            another_parameter: "default_extra".to_string()
+            another_parameter: "default_extra".to_string(),
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(default)]
 struct Config {
     pub some_number: usize,
     pub some_parameter: String,
-    #[serde(default)]
     pub extra_section: ExtraSection,
 }
-
 
 impl Config {
     pub fn from_file(path: &str) -> Result<Config, Box<dyn Error>> {
@@ -38,8 +37,22 @@ impl Config {
         let config = toml::from_str(&data)?;
         Ok(config)
     }
+
+    pub fn generate_default_toml() -> Result<String, Box<dyn Error>> {
+        let config = Config::default();
+        Ok(toml::to_string::<Config>(&config)?)
+    }
 }
 
+impl Default for Config {
+    fn default() -> Self {
+        Config {
+            some_number: 111,
+            some_parameter: "default top level".to_string(),
+            extra_section: ExtraSection::default(),
+        }
+    }
+}
 
 
 fn main() {
@@ -51,5 +64,10 @@ fn main() {
     }
     let path = env::args().nth(1).unwrap();
     let conf = Config::from_file(&path);
-    println!("Conf: {:?}", conf)
+    println!("Conf: {:?}", conf);
+    let conf = conf.unwrap();
+    println!("Parsed toml: {:?}", conf);
+    println!("===========");
+    let default_toml = Config::generate_default_toml().unwrap();
+    println!("{}", default_toml);
 }

@@ -33,7 +33,6 @@ struct Config {
 impl Config {
     pub fn from_file(path: &str) -> Result<Config, Box<dyn Error>> {
         let data = fs::read_to_string(path)?;
-        println!("data: {:?}", data);
         let config = toml::from_str(&data)?;
         Ok(config)
     }
@@ -56,16 +55,12 @@ impl Default for Config {
 
 
 fn main() {
-    println!("Hello, world!");
-    println!("{:?}", env::args().len());
     if env::args().len() != 2 {
         println!("There should be exactly one argument");
         exit(1);
     }
     let path = env::args().nth(1).unwrap();
     let conf = Config::from_file(&path);
-    println!("Conf: {:?}", conf);
-    let conf = conf.unwrap();
     println!("Parsed toml: {:?}", conf);
     println!("===========");
     let default_toml = Config::generate_default_toml().unwrap();
